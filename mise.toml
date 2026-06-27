@@ -7,7 +7,7 @@ run = "go run ."
 
 [tasks.build]
 description = "Build the scraper binary"
-run = "go build -o bin/northscraper ."
+run = "go build -o bin/ninemeterorbit ."
 
 [tasks.tidy]
 description = "Tidy Go module dependencies"

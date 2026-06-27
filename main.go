@@ -1,4 +1,4 @@
-// northscraper reads a list of Shopify product URLs (one per line, each with a
+// ninemeterorbit reads a list of Shopify product URLs (one per line, each with a
 // ?variant=<id> query param) and reports the price and availability of the
 // variant each URL points to.
 //
