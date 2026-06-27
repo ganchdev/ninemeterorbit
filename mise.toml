@@ -1,0 +1,18 @@
+[tools]
+go = "1.26"
+
+[tasks.run]
+description = "Run the scraper"
+run = "go run ."
+
+[tasks.build]
+description = "Build the scraper binary"
+run = "go build -o bin/northscraper ."
+
+[tasks.tidy]
+description = "Tidy Go module dependencies"
+run = "go mod tidy"
+
+[tasks.fmt]
+description = "Format Go source"
+run = "go fmt ./..."
