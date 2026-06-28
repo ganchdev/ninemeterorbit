@@ -180,6 +180,10 @@ func fetchPage(rawURL string) (string, error) {
 	req.Header.Set("User-Agent", userAgent)
 	req.Header.Set("Accept-Language", acceptLanguage)
 	req.Header.Set("Accept", "application/json,text/javascript,*/*;q=0.8")
+	// Force the GB market so we get GBP prices regardless of the server's
+	// geo-IP. Without this, requests from non-UK IPs (e.g. the VPS) hit a
+	// different market where the .js endpoint 404s.
+	req.Header.Set("Cookie", "localization=GB; cart_currency=GBP")
 
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
