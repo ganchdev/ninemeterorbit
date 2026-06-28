@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"os"
 	"strings"
 	"testing"
 )
@@ -47,9 +48,10 @@ func TestParseAndFormat(t *testing.T) {
 		t.Errorf("unexpected variant: %+v", v)
 	}
 
-	line := formatVariant(p.Title, "2025", "https://example/p", v)
+	qty := 4
+	line := formatVariant(p.Title, "2025", "https://example/p", v, &qty)
 	for _, want := range []string{
-		"[£1109.00 | IN STOCK]",
+		"[£1109.00 | IN STOCK | 4 left]",
 		"Orbit Kite 2025 — 9m / Pacific Blue",
 		"-25%",
 		"https://example/p",
@@ -58,4 +60,29 @@ func TestParseAndFormat(t *testing.T) {
 			t.Errorf("output missing %q in:\n%s", want, line)
 		}
 	}
+
+	// A nil count omits the "left" segment entirely.
+	if line := formatVariant(p.Title, "2025", "https://example/p", v, nil); strings.Contains(line, "left") {
+		t.Errorf("expected no count when qty is nil:\n%s", line)
+	}
+}
+
+// TestParseStockExample checks the inventory map parses from the saved HTML page.
+func TestParseStockExample(t *testing.T) {
+	html, err := os.ReadFile("example.html")
+	if err != nil {
+		t.Skipf("no example.html: %v", err)
+	}
+	stock, err := parseStock(string(html))
+	if err != nil {
+		t.Fatalf("parseStock: %v", err)
+	}
+	e, ok := stock[49107405472085] // 9m / Pacific Blue
+	if !ok {
+		t.Fatalf("variant 49107405472085 missing from stock map")
+	}
+	if e.InventoryQuantity != 4 {
+		t.Errorf("inventory_quantity = %d, want 4", e.InventoryQuantity)
+	}
+	t.Logf("parsed stock for %d variants", len(stock))
 }
