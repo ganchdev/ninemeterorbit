@@ -1,6 +1,10 @@
 [tools]
 go = "1.26"
 
+# Load local secrets/config (gitignored): NTFY_TOPIC, DEPLOY_HOST, DEPLOY_PORT.
+[env]
+_.file = ".env.local"
+
 [tasks.run]
 description = "Run the scraper"
 run = "go run ."
@@ -16,3 +20,10 @@ run = "go mod tidy"
 [tasks.fmt]
 description = "Format Go source"
 run = "go fmt ./..."
+
+[tasks.deploy]
+description = "Cross-compile and deploy the binary + urls.txt to the VPS"
+run = [
+  "env GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -o bin/ninemeterorbit-linux .",
+  "scp -P $DEPLOY_PORT bin/ninemeterorbit-linux urls.txt $DEPLOY_HOST:/root/ninemeterorbit/",
+]
